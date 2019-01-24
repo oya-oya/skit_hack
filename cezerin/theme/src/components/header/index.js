@@ -1,10 +1,14 @@
 import React, { Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import axios from 'axios';
 import { themeSettings, text } from '../../lib/settings';
 import Cart from './cart';
 import CartIndicator from './cartIndicator';
 import SearchBox from './searchBox';
 import HeadMenu from './headMenu';
+
+const HOST = 'http://localhost:3001';
 
 const Logo = ({ src, onClick, alt }) => (
 	<NavLink className="logo-image" to="/" onClick={onClick}>
@@ -39,7 +43,8 @@ export default class Header extends React.Component {
 		this.state = {
 			mobileMenuIsActive: false,
 			mobileSearchIsActive: false,
-			cartIsActive: false
+			cartIsActive: false,
+			signedIn: false
 		};
 	}
 
@@ -111,6 +116,38 @@ export default class Header extends React.Component {
 		this.props.goBack();
 	};
 
+	onSignIn = googleUser => {
+		var profile = googleUser.getBasicProfile();
+		console.log('ID: ' + profile.getId());
+		axios
+			.post(HOST + '/api2/login/', {
+				id: profile.getId()
+			})
+			.then(res => {
+				this.setState({
+					signedIn: true
+				});
+			})
+			.catch(err => {
+				alert("Something's wrong. Try signing in again.");
+				console.error(err);
+				return;
+			});
+	};
+
+	signOut = () => {
+		var auth2 = gapi.auth2.getAuthInstance();
+		let that = this;
+		auth2.signOut().then(function() {
+			axios.post(HOST + '/api2/logout').then(() => {
+				console.log('User signed out.');
+				that.setState({
+					signedIn: false
+				});
+			});
+		});
+	};
+
 	render() {
 		const {
 			categories,
@@ -165,6 +202,26 @@ export default class Header extends React.Component {
 										this.state.mobileSearchIsActive ? 'search-active' : ''
 									}
 								/>
+
+								{!this.state.signedIn ? (
+									<GoogleLogin
+										clientId="47980453903-udi1dt3j70vi8j6ilim2lb6o5fe4jsj2.apps.googleusercontent.com"
+										buttonText="Sign In"
+										onSuccess={this.onSignIn}
+										onFailure={() =>
+											alert("Something's wrong. Try signing in again.")
+										}
+										icon={false}
+										style={{ margin: '0 15px' }}
+									/>
+								) : (
+									<GoogleLogout
+										buttonText="Sign Out"
+										onLogoutSuccess={this.signOut}
+										icon={false}
+										style={{ margin: '0 15px' }}
+									/>
+								)}
 
 								<CartIndicator
 									cart={cart}

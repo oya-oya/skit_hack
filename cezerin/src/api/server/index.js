@@ -11,6 +11,8 @@ import { db } from './lib/mongo';
 import dashboardWebSocket from './lib/dashboardWebSocket';
 import ajaxRouter from './ajaxRouter';
 import apiRouter from './apiRouter';
+const sessions = require('express-session');
+let ms = sessions.MemoryStore;
 const app = express();
 
 security.applyMiddleware(app);
@@ -34,9 +36,51 @@ app.use(responseTime());
 app.use(cookieParser(settings.cookieSecretKey));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(
+	sessions({
+		name: 'dummystore',
+		secret: 'oyaoyaoya',
+		resave: true,
+		saveUninitialized: true,
+		store: new ms()
+	})
+);
+
 app.use('/ajax', ajaxRouter);
 app.use('/api', apiRouter);
 app.use(logger.sendResponse);
+
+/* * * * * * ** * * * * * * * * *
+	
+	HACKATHON WORK STARTS
+
+* * * * * * ** * * * * * * * * */
+
+app.post('/api2/login', (req, res) => {
+	if (req.session.userid) {
+		res.json({
+			auth: 'yes'
+		});
+		return;
+	}
+
+	req.session.userid = 0;
+	req.session.timestamp = Date.now();
+	res.json({
+		auth: 'yes'
+	});
+});
+
+app.post('/api2/logout', (req, res) => {
+	req.session.destroy();
+	res.end();
+});
+
+/* * * * * * ** * * * * * * * * *
+	
+	HACKATHON WORK ENDS
+
+* * * * * * ** * * * * * * * * */
 
 const server = app.listen(settings.apiListenPort, () => {
 	const serverAddress = server.address();

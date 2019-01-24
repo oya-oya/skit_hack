@@ -49,7 +49,12 @@ class SwitchContainers extends React.Component {
 
 		switch (currentPage.type) {
 			case PRODUCT:
-				return <ProductContainer />;
+				return (
+					<div>
+						kjnsdkfjsdkjfbksjdbkj "dirgbeiurgbiub"
+						<ProductContainer />
+					</div>
+				);
 			case PRODUCT_CATEGORY:
 				return <CategoryContainer />;
 			case SEARCH:

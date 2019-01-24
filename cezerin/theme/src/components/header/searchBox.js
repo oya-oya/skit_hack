@@ -28,6 +28,7 @@ export default class SearchBox extends React.Component {
 	};
 
 	handleSearch = () => {
+		console.log('clicked');
 		this.props.onSearch(this.state.value);
 	};
 
@@ -71,7 +72,7 @@ export default class SearchBox extends React.Component {
 				/>
 				<img
 					className="search-icon-search"
-					src="/assets/images/search.svg"
+					src="https://www.google.co.in/logos/doodles/2019/lev-landaus-111th-birthday-5630512767959040.2-s.png"
 					alt={text.search}
 					title={text.search}
 					onClick={this.handleSearch}

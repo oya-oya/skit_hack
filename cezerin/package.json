@@ -59,6 +59,7 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
@@ -85,6 +86,7 @@
     "esm": "^3.0.80",
     "express": "^4.16.3",
     "express-jwt": "^5.3.0",
+    "express-session": "^1.15.6",
     "formidable": "^1.2.1",
     "fs-extra": "^7.0.0",
     "handlebars": "^4.0.11",
@@ -111,6 +113,7 @@
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.4.2",
     "react-dropzone": "^5.0.1",
+    "react-google-login": "^5.0.0",
     "react-helmet": "^5.2.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
