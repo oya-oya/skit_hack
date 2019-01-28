@@ -3,16 +3,15 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import responseTime from 'response-time';
+import mongoose from 'mongoose';
 import winston from 'winston';
 import logger from './lib/logger';
 import settings from './lib/settings';
 import security from './lib/security';
-import { db } from './lib/mongo';
 import dashboardWebSocket from './lib/dashboardWebSocket';
 import ajaxRouter from './ajaxRouter';
 import apiRouter from './apiRouter';
-const sessions = require('express-session');
-let ms = sessions.MemoryStore;
+
 const app = express();
 
 security.applyMiddleware(app);
@@ -32,20 +31,11 @@ app.all('*', (req, res, next) => {
 	);
 	next();
 });
+
 app.use(responseTime());
 app.use(cookieParser(settings.cookieSecretKey));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(
-	sessions({
-		name: 'dummystore',
-		secret: 'oyaoyaoya',
-		resave: true,
-		saveUninitialized: true,
-		store: new ms()
-	})
-);
-
 app.use('/ajax', ajaxRouter);
 app.use('/api', apiRouter);
 app.use(logger.sendResponse);
@@ -56,6 +46,39 @@ app.use(logger.sendResponse);
 
 * * * * * * ** * * * * * * * * */
 
+const sessions = require('express-session');
+let ms = sessions.MemoryStore;
+const keys = require('./keys.json');
+
+mongoose.connect(
+	keys.dbUrl,
+	{
+		user: keys.user,
+		pass: keys.pass
+	}
+);
+
+let db = mongoose.connection;
+db.on('error', err => {
+	console.log(err);
+});
+
+const userSchema = mongoose.Schema({
+	id: Number
+});
+
+const User = mongoose.model('User', userSchema);
+
+app.use(
+	sessions({
+		name: 'dummystore',
+		secret: keys.secret,
+		resave: true,
+		saveUninitialized: true,
+		store: new ms()
+	})
+);
+
 app.post('/api2/login', (req, res) => {
 	if (req.session.userid) {
 		res.json({
@@ -64,11 +87,37 @@ app.post('/api2/login', (req, res) => {
 		return;
 	}
 
-	req.session.userid = 0;
+	req.session.userid = req.body.id;
 	req.session.timestamp = Date.now();
 	res.json({
-		auth: 'yes'
+		auth: true
 	});
+
+	User.findOne(
+		{
+			id: req.body.id
+		},
+		(err, user) => {
+			if (user == null) {
+				let user = new User({
+					id: req.body.id
+				});
+				user.save();
+			}
+		}
+	);
+});
+
+app.get('/api2/checkSession', (req, res) => {
+	if (req.session.userid) {
+		res.json({
+			present: true
+		});
+	} else {
+		res.json({
+			present: false
+		});
+	}
 });
 
 app.post('/api2/logout', (req, res) => {

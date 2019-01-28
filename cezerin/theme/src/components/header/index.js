@@ -57,6 +57,24 @@ export default class Header extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		axios
+			.get(HOST + '/api2/checkSession')
+			.then(res => {
+				if (res.data.present) {
+					this.setState({
+						signedIn: true
+					});
+				}
+			})
+			.catch(err => {
+				if (err) {
+					alert('refresh the page');
+					return;
+				}
+			});
+	}
+
 	menuToggle = () => {
 		this.setState({
 			mobileMenuIsActive: !this.state.mobileMenuIsActive,
