@@ -15,6 +15,10 @@ import Quantity from './quantity';
 import RelatedProducts from './relatedProducts';
 import Tags from './tags';
 
+import axios from 'axios';
+
+const SERVER = 'http://localhost:3001/';
+
 const Description = ({ description }) => (
 	<div
 		className="product-content"
@@ -38,6 +42,14 @@ export default class ProductDetails extends React.Component {
 		);
 		this.addToCart = this.addToCart.bind(this);
 		this.checkSelectedOptions = this.checkSelectedOptions.bind(this);
+
+		axios.post(SERVER + 'api2/productCategory', {
+			cat: this.props.product.category_name
+		});
+
+		axios.post(SERVER + 'api2/currentCat', {
+			cat: this.props.product.category_name
+		});
 	}
 
 	onOptionChange(optionId, valueId) {
@@ -87,6 +99,10 @@ export default class ProductDetails extends React.Component {
 		if (selectedVariant) {
 			item.variant_id = selectedVariant.id;
 		}
+
+		axios.post(SERVER + 'api2/itemsAddedInCart', {
+			cat: this.props.product.category_name
+		});
 
 		addCartItem(item);
 	}

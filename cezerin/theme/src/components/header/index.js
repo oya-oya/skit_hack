@@ -175,6 +175,7 @@ export default class Header extends React.Component {
 			location,
 			productFilter
 		} = this.props.state;
+		settings.logo = '/assets/images/Paytm_logo.png';
 		const classToggle = this.state.mobileMenuIsActive
 			? 'navbar-burger is-hidden-tablet is-active'
 			: 'navbar-burger is-hidden-tablet';

@@ -66,8 +66,47 @@ db.on('error', err => {
 const userSchema = mongoose.Schema({
 	id: Number
 });
-
 const User = mongoose.model('User', userSchema);
+
+const NNFeatureSchema = mongoose.Schema({
+	userID: Number,
+	gaming: {
+		searches: Number,
+		clicks: Number,
+		time: Number,
+		itemsChecked: Number,
+		inCart: Number
+	},
+	furniture: {
+		searches: Number,
+		clicks: Number,
+		time: Number,
+		itemsChecked: Number,
+		inCart: Number
+	},
+	selfcare: {
+		searches: Number,
+		clicks: Number,
+		time: Number,
+		itemsChecked: Number,
+		inCart: Number
+	},
+	clothing: {
+		searches: Number,
+		clicks: Number,
+		time: Number,
+		itemsChecked: Number,
+		inCart: Number
+	},
+	footwear: {
+		searches: Number,
+		clicks: Number,
+		time: Number,
+		itemsChecked: Number,
+		inCart: Number
+	}
+});
+const NNFeature = mongoose.model('userFeatures', NNFeatureSchema);
 
 app.use(
 	sessions({
@@ -106,6 +145,74 @@ app.post('/api2/login', (req, res) => {
 			}
 		}
 	);
+});
+
+app.post('/api2/currentCat', (req, res) => {
+	if (req.session.userid) {
+		if (req.session.cat != req.body.cat) {
+			req.session.cat = req.body.cat;
+			NNFeature.findOneAndUpdate(
+				{
+					userid: req.session.userid
+				},
+				{
+					$inc: {
+						[req.body.cat + '.' + 'time']: req.session.timestamp - Date.now()
+					}
+				}
+			);
+			req.session.timestamp = Date.now();
+		}
+	}
+	res.end();
+});
+
+app.post('/api2/bannerClicks', (req, res) => {
+	if (req.session.userid) {
+		NNFeature.findOneAndUpdate(
+			{
+				userid: req.session.userid
+			},
+			{
+				$inc: {
+					[req.body.cat + '.' + 'clicks']: 1
+				}
+			}
+		);
+	}
+	res.end();
+});
+
+app.post('/api2/itemsAddedInCart', (req, res) => {
+	if (req.session.userid) {
+		NNFeature.findOneAndUpdate(
+			{
+				userID: req.session.userid
+			},
+			{
+				$set: {
+					[req.body.cat + '.' + 'inCart']: 1
+				}
+			}
+		);
+	}
+	res.end();
+});
+
+app.post('/api2/productCategory', (req, res) => {
+	if (req.session.userid) {
+		NNFeature.findOneAndUpdate(
+			{
+				userID: req.session.userid
+			},
+			{
+				$inc: {
+					[req.body.cat + '.' + 'itemsChecked']: 1
+				}
+			}
+		);
+	}
+	res.end();
 });
 
 app.get('/api2/checkSession', (req, res) => {

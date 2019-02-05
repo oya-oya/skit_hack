@@ -92,10 +92,7 @@ export default class Footer extends React.PureComponent {
 
 	render() {
 		const { settings } = this.props;
-		const footerLogoUrl =
-			themeSettings.footer_logo_url && themeSettings.footer_logo_url.length > 0
-				? '/assets/images/' + themeSettings.footer_logo_url
-				: settings.logo;
+		const footerLogoUrl = '/assets/images/Paytm_logo.png';
 
 		return (
 			<section className="section section-footer">
@@ -103,7 +100,6 @@ export default class Footer extends React.PureComponent {
 				<footer>
 					<div className="container">
 						<div className="content">
-							<div className="columns is-gapless">klfnvkjdfbkjvbkdj</div>
 							<div className="columns is-gapless">
 								<div className="column is-5">
 									<div className="mobile-padding">

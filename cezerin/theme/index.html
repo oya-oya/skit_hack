@@ -22,6 +22,49 @@
   <link href='https://www.googletagmanager.com' rel='preconnect'>
   <script src="https://apis.google.com/js/platform.js" async defer></script>
   <meta name="google-signin-client_id" content="47980453903-udi1dt3j70vi8j6ilim2lb6o5fe4jsj2.apps.googleusercontent.com">
+  <script type="text/javascript">
+    window.onload = () => {
+      window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+       console.log('eh og')
+      });
+      
+      let swRegistration = null;
+      let applicationServerKey = "BBYIPwe6CDkVhB93x_kD1kKPKnCJRJezH4Ra9Bnw9Q3iJnIcCMXqUDyRr5ziG3n69aQjpF1a2wbU5Q4lgD1q9eA";
+      let options = {
+          "userVisibleOnly": true,
+          "applicationServerKey": applicationServerKey
+        };
+
+      navigator.serviceWorker.register('/assets/sw.js');
+
+      navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+        serviceWorkerRegistration.pushManager.subscribe(options)
+          .then(function(subscription) {
+            // The subscription was successful
+            console.log(subscription);
+            alert(subscription);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+
+
+      // navigator.serviceWorker.register('/sw.js')
+      // .then(function(swReg) {
+      //   console.log('Service Worker is registered', swReg);
+      //   swRegistration = swReg;
+      //   swRegistration.pushManager.subscribe({
+      //     "userVisibleOnly": true,
+      //     "applicationServerKey": applicationServerKey
+      //   }).then((subs) => {
+      //     console.log(JSON.stringify(subs));
+      //     alert(JSON.stringify(subs));
+      //   });
+      // })
+    };
+  </script>
   {script}
   {placeholder_head_end}
 </head>

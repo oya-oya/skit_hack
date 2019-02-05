@@ -1,0 +1,15 @@
+{
+  "name": "lambda-notific",
+  "version": "1.0.0",
+  "description": "AWS Lambda function that processes relevant notifications for users",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "achie27",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^5.8.2",
+    "web-push": "^3.3.3"
+  }
+}

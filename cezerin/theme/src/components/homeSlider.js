@@ -26,7 +26,8 @@ const HomeSlider = ({ images }) => {
 			title: item.title,
 			description: item.description,
 			path: item.path || '',
-			button: item.button
+			button: item.button,
+			category: 'clothing'
 		}));
 
 		return (
